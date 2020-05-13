@@ -1,15 +1,19 @@
 package com.example.restexample.service;
 
-import com.example.restexample.entity.Patient;
+import com.example.restexample.dto.PatientDto;
 
 import java.util.List;
 
 public interface PatientService {
-    void createUpdate(Patient patient);
+    void create(PatientDto patient);
 
-    void delete(Patient patient);
+    void changePatientDoctor(PatientDto patientDto);
 
-    Patient findById(Integer id);
+    void deleteById(Integer id);
 
-    List<Patient> findAll();
+    PatientDto returnPatientById(Integer id);
+
+    List<PatientDto> findAllByDoctorId(Integer id);
+
+    List<PatientDto> findAll();
 }
