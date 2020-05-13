@@ -3,6 +3,7 @@ package com.example.restexample.service.impl;
 import com.example.restexample.dto.DoctorDto;
 import com.example.restexample.entity.Doctor;
 import com.example.restexample.exception.DoctorNotFoundException;
+import com.example.restexample.exception.EntityIsAlreadyExistException;
 import com.example.restexample.repository.DoctorRepository;
 import com.example.restexample.service.DoctorService;
 import com.example.restexample.service.mapper.Mapper;
@@ -27,7 +28,11 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public void createUpdate(DoctorDto doctor) {
-        repository.save(mapper.mapToEntity(doctor));
+        if (!repository.findById(doctor.getId()).isPresent()) {
+            repository.save(mapper.mapToEntity(doctor));
+            return;
+        }
+        throw new EntityIsAlreadyExistException("Doctor already exist with id: " + doctor.getId());
     }
 
     @Override

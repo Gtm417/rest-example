@@ -29,10 +29,12 @@ public class PatientServiceImpl implements PatientService {
         this.mapper = mapper;
     }
 
+    @Transactional
     @Override
     public void create(PatientDto patient) {
-        if (doctorRepository.findById(patient.getDoctorId()).isPresent()) {
+        if (!doctorRepository.findById(patient.getDoctorId()).isPresent()) {
             patientRepository.save(mapper.mapToEntity(patient));
+            return;
         }
         throw new DoctorNotFoundException("Doctor not found with id: " + patient.getDoctorId());
     }
