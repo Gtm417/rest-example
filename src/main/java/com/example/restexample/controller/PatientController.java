@@ -2,8 +2,6 @@ package com.example.restexample.controller;
 
 
 import com.example.restexample.dto.PatientDto;
-import com.example.restexample.exception.DoctorNotFoundException;
-import com.example.restexample.exception.PatientNotFoundException;
 import com.example.restexample.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +21,9 @@ public class PatientController {
 
     }
 
-
     @GetMapping
     public List<PatientDto> getAllPatients() {
         return patientService.findAll();
-    }
-
-    @GetMapping("/doctors/{id}")
-    public List<PatientDto> getAllPatientsByDoctorId(@PathVariable(name = "id") Integer id) {
-        return patientService.findAllByDoctorId(id);
     }
 
     @GetMapping("/{id}")
@@ -57,8 +49,5 @@ public class PatientController {
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler({PatientNotFoundException.class, DoctorNotFoundException.class})
-    public ResponseEntity<Void> patientNotFoundHandling() {
-        return ResponseEntity.notFound().build();
-    }
+
 }

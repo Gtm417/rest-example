@@ -1,9 +1,9 @@
 package com.example.restexample.controller;
 
 import com.example.restexample.dto.DoctorDto;
-import com.example.restexample.exception.DoctorNotFoundException;
-import com.example.restexample.exception.EntityIsAlreadyExistException;
+import com.example.restexample.dto.PatientDto;
 import com.example.restexample.service.DoctorService;
+import com.example.restexample.service.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +13,11 @@ import java.util.List;
 @RequestMapping("/doctors")
 public class DoctorController {
     private final DoctorService service;
+    private final PatientService patientService;
 
-    public DoctorController(DoctorService service) {
+    public DoctorController(DoctorService service, PatientService patientService) {
         this.service = service;
+        this.patientService = patientService;
     }
 
     @GetMapping
@@ -28,14 +30,19 @@ public class DoctorController {
         return service.returnDoctorById(id);
     }
 
+    @GetMapping("/{id}/patients")
+    public List<PatientDto> getAllPatientsByDoctorId(@PathVariable(name = "id") Integer id) {
+        return patientService.findAllByDoctorId(id);
+    }
+
     @PostMapping
     public void addDoctor(@RequestBody DoctorDto doctorDto) {
         service.createUpdate(doctorDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> changeDoctorSpecialization(@RequestBody String specialization, @PathVariable(name = "id") Integer id) {
-        service.changeDoctorSpecialization(id, specialization);
+    public ResponseEntity<Void> changeDoctorInfo(@RequestBody DoctorDto doctorDto, @PathVariable(name = "id") Integer id) {
+        service.changeDoctor(id, doctorDto);
         return ResponseEntity.ok().build();
     }
 
@@ -45,13 +52,5 @@ public class DoctorController {
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler(EntityIsAlreadyExistException.class)
-    public ResponseEntity<Void> entityIsAlreadyExistHandling() {
-        return ResponseEntity.badRequest().build();
-    }
 
-    @ExceptionHandler(DoctorNotFoundException.class)
-    public ResponseEntity<Void> doctorNotFoundHandling() {
-        return ResponseEntity.notFound().build();
-    }
 }
