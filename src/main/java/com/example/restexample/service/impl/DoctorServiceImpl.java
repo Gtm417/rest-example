@@ -36,10 +36,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void changeDoctorSpecialization(Integer doctorId, String specialization) {
-        Doctor doctor = findById(doctorId);
-        doctor.setSpecialization(specialization);
-        repository.save(doctor);
+    public void changeDoctor(Integer doctorId, DoctorDto doctorDto) {
+        repository.save(mapper.mapToEntity(doctorDto));
     }
 
     @Transactional

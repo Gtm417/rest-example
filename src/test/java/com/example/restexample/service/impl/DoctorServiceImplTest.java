@@ -2,7 +2,6 @@ package com.example.restexample.service.impl;
 
 import com.example.restexample.dto.DoctorDto;
 import com.example.restexample.entity.Doctor;
-import com.example.restexample.exception.DoctorNotFoundException;
 import com.example.restexample.exception.EntityIsAlreadyExistException;
 import com.example.restexample.repository.DoctorRepository;
 import com.example.restexample.service.DoctorService;
@@ -63,7 +62,7 @@ class DoctorServiceImplTest {
 
     @Test
     void createUpdateShouldThrowException() {
-        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+        when(repository.findById(anyInt())).thenReturn(Optional.of(ENTITY));
 
         assertThrows(EntityIsAlreadyExistException.class, () -> doctorService.createUpdate(DTO));
         verify(repository).findById(anyInt());
@@ -71,19 +70,11 @@ class DoctorServiceImplTest {
 
     @Test
     void changeDoctorSpecializationShouldVerify() {
-        doctorService.changeDoctorSpecialization(1, "test");
 
-        verify(repository).findById(anyInt());
+        doctorService.changeDoctor(1, DTO);
+
+
         verify(repository).save(any(Doctor.class));
-    }
-
-    @Test
-    void changeDoctorSpecializationShouldThrowExceptionIfDoctorIsExist() {
-        when(repository.findById(anyInt())).thenReturn(Optional.empty());
-
-        assertThrows(DoctorNotFoundException.class,
-                () -> doctorService.changeDoctorSpecialization(1, "test"));
-        verify(repository).findById(anyInt());
     }
 
     @Test

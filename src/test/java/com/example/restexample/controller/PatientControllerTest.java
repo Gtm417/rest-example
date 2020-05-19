@@ -39,15 +39,6 @@ class PatientControllerTest {
         verify(service).findAll();
     }
 
-    @Test
-    void testGetAllPatientsByDoctorIdShouldReturnListDto() {
-        when(service.findAllByDoctorId(anyInt())).thenReturn(Collections.singletonList(DTO));
-
-        List<PatientDto> actual = controller.getAllPatientsByDoctorId(1);
-
-        assertEquals(Collections.singletonList(DTO), actual);
-        verify(service).findAllByDoctorId(1);
-    }
 
     @Test
     void findPatientShouldReturnPatientDto() {

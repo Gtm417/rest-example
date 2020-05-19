@@ -7,7 +7,7 @@ import java.util.List;
 public interface DoctorService {
     void createUpdate(DoctorDto doctor);
 
-    void changeDoctorSpecialization(Integer doctorId, String specialization);
+    void changeDoctor(Integer doctorId, DoctorDto doctorDto);
 
     void deleteById(Integer id);
 
