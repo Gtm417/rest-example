@@ -8,6 +8,7 @@ import com.example.restexample.repository.DoctorRepository;
 import com.example.restexample.service.DoctorService;
 import com.example.restexample.service.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,8 +60,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorDto> findAll() {
-        return repository.findAll()
+    public List<DoctorDto> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
                 .stream()
                 .map((mapper::mapToDto))
                 .collect(Collectors.toList());

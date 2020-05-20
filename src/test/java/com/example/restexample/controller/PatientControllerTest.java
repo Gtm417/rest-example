@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = PatientController.class)
 class PatientControllerTest {
     private static final PatientDto DTO = PatientDto.builder().id(1).firstName("test").secondName("test2").diseaseDescription("testDescription").doctorId(1).build();
+    private static final Pageable PAGEABLE = Pageable.unpaged();
 
     @Autowired
     PatientController controller;
@@ -29,14 +31,15 @@ class PatientControllerTest {
     @MockBean
     private PatientService service;
 
+
     @Test
     void getAllPatientsShouldReturnListDto() {
-        when(service.findAll()).thenReturn(Collections.singletonList(DTO));
+        when(service.findAll(PAGEABLE)).thenReturn(Collections.singletonList(DTO));
 
-        List<PatientDto> actual = controller.getAllPatients();
+        List<PatientDto> actual = controller.getAllPatients(PAGEABLE);
 
         assertEquals(Collections.singletonList(DTO), actual);
-        verify(service).findAll();
+        verify(service).findAll(PAGEABLE);
     }
 
 

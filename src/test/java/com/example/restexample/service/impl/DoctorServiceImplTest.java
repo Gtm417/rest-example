@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.when;
 class DoctorServiceImplTest {
     private static final DoctorDto DTO = DoctorDto.builder().id(1).name("test").license("license").specialization("test").build();
     private static final Doctor ENTITY = Doctor.builder().id(1).name("test").license("license").specialization("test").build();
+    private static final Pageable PAGEABLE = Pageable.unpaged();
     @Autowired
     DoctorService doctorService;
 
@@ -46,7 +49,7 @@ class DoctorServiceImplTest {
         when(mapper.mapToDto(ENTITY)).thenReturn(DTO);
         when(repository.save(any(Doctor.class))).thenReturn(ENTITY);
         when(repository.findById(anyInt())).thenReturn(Optional.of(ENTITY));
-        when(repository.findAll()).thenReturn(Collections.singletonList(ENTITY));
+        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl(Collections.singletonList(ENTITY)));
     }
 
     @Test
@@ -96,9 +99,9 @@ class DoctorServiceImplTest {
 
     @Test
     void findAllShouldReturnListOfDto() {
-        List<DoctorDto> actual = doctorService.findAll();
+        List<DoctorDto> actual = doctorService.findAll(PAGEABLE);
 
-        verify(repository).findAll();
+        verify(repository).findAll(PAGEABLE);
         verify(mapper).mapToDto(ENTITY);
 
         assertEquals(Collections.singletonList(DTO), actual);

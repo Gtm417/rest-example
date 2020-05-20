@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -31,7 +33,7 @@ import static org.mockito.Mockito.*;
 class PatientServiceImplTest {
     private static final PatientDto DTO = PatientDto.builder().id(1).firstName("test").secondName("test2").diseaseDescription("testDescription").doctorId(1).build();
     private static final Patient ENTITY = Patient.builder().id(1).firstName("test").secondName("test2").diseaseDescription("testDescription").build();
-
+    private static final Pageable PAGEABLE = Pageable.unpaged();
     @Autowired
     PatientService service;
 
@@ -48,8 +50,8 @@ class PatientServiceImplTest {
         when(mapper.mapToDto(ENTITY)).thenReturn(DTO);
         when(patientRepository.save(any(Patient.class))).thenReturn(ENTITY);
         when(patientRepository.findById(anyInt())).thenReturn(Optional.of(ENTITY));
-        when(patientRepository.findAll()).thenReturn(Collections.singletonList(ENTITY));
-        when(patientRepository.findAllByDoctor_Id(anyInt())).thenReturn(Collections.singletonList(ENTITY));
+        when(patientRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl(Collections.singletonList(ENTITY)));
+        when(patientRepository.findAllByDoctor_Id(anyInt(), any(Pageable.class))).thenReturn(new PageImpl(Collections.singletonList(ENTITY)));
         when(doctorRepository.findById(anyInt())).thenReturn(Optional.of(new Doctor()));
     }
 
@@ -115,9 +117,9 @@ class PatientServiceImplTest {
 
     @Test
     void findAllByDoctorId() {
-        List<PatientDto> actual = service.findAllByDoctorId(1);
+        List<PatientDto> actual = service.findAllByDoctorId(1, PAGEABLE);
 
-        verify(patientRepository).findAllByDoctor_Id(1);
+        verify(patientRepository).findAllByDoctor_Id(1, PAGEABLE);
         verify(mapper).mapToDto(ENTITY);
 
         assertEquals(Collections.singletonList(DTO), actual);
@@ -125,9 +127,9 @@ class PatientServiceImplTest {
 
     @Test
     void findAll() {
-        List<PatientDto> actual = service.findAll();
+        List<PatientDto> actual = service.findAll(PAGEABLE);
 
-        verify(patientRepository).findAll();
+        verify(patientRepository).findAll(PAGEABLE);
         verify(mapper).mapToDto(ENTITY);
 
         assertEquals(Collections.singletonList(DTO), actual);
