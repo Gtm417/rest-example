@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.when;
 class DoctorControllerTest {
     private static final PatientDto PATIENT_DTO = PatientDto.builder().id(1).firstName("test").secondName("test2").diseaseDescription("testDescription").doctorId(1).build();
     private static final DoctorDto DOCTOR_DTO = DoctorDto.builder().id(1).name("test").license("license").specialization("test").build();
-
+    private static final Pageable PAGEABLE = Pageable.unpaged();
     @Autowired
     DoctorController controller;
 
@@ -37,22 +39,22 @@ class DoctorControllerTest {
 
     @Test
     void getAllDoctorsShouldReturnListDto() {
-        when(service.findAll()).thenReturn(Collections.singletonList(DOCTOR_DTO));
+        when(service.findAll(PAGEABLE)).thenReturn(Collections.singletonList(DOCTOR_DTO));
 
-        List<DoctorDto> actual = controller.getAllDoctors();
+        List<DoctorDto> actual = controller.getAllDoctors(PAGEABLE);
 
         assertEquals(Collections.singletonList(DOCTOR_DTO), actual);
-        verify(service).findAll();
+        verify(service).findAll(PAGEABLE);
     }
 
     @Test
     void testGetAllPatientsByDoctorIdShouldReturnListDto() {
-        when(patientService.findAllByDoctorId(anyInt())).thenReturn(Collections.singletonList(PATIENT_DTO));
+        when(patientService.findAllByDoctorId(anyInt(), any(Pageable.class))).thenReturn(Collections.singletonList(PATIENT_DTO));
 
-        List<PatientDto> actual = controller.getAllPatientsByDoctorId(1);
+        List<PatientDto> actual = controller.getAllPatientsByDoctorId(1, PAGEABLE);
 
         assertEquals(Collections.singletonList(PATIENT_DTO), actual);
-        verify(patientService).findAllByDoctorId(1);
+        verify(patientService).findAllByDoctorId(1, PAGEABLE);
     }
 
     @Test

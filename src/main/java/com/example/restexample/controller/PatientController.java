@@ -4,12 +4,17 @@ package com.example.restexample.controller;
 import com.example.restexample.dto.PatientDto;
 import com.example.restexample.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping("/patients")
 public class PatientController {
     private final PatientService patientService;
@@ -22,8 +27,8 @@ public class PatientController {
     }
 
     @GetMapping
-    public List<PatientDto> getAllPatients() {
-        return patientService.findAll();
+    public List<PatientDto> getAllPatients(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC, size = 3) Pageable pageable) {
+        return patientService.findAll(pageable);
     }
 
     @GetMapping("/{id}")

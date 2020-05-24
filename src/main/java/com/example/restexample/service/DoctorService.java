@@ -1,6 +1,7 @@
 package com.example.restexample.service;
 
 import com.example.restexample.dto.DoctorDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ public interface DoctorService {
 
     DoctorDto returnDoctorById(Integer id);
 
-    List<DoctorDto> findAll();
+    List<DoctorDto> findAll(Pageable pageable);
 }

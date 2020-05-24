@@ -4,12 +4,17 @@ import com.example.restexample.dto.DoctorDto;
 import com.example.restexample.dto.PatientDto;
 import com.example.restexample.service.DoctorService;
 import com.example.restexample.service.PatientService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 @RequestMapping("/doctors")
 public class DoctorController {
     private final DoctorService service;
@@ -20,9 +25,10 @@ public class DoctorController {
         this.patientService = patientService;
     }
 
+
     @GetMapping
-    public List<DoctorDto> getAllDoctors() {
-        return service.findAll();
+    public List<DoctorDto> getAllDoctors(@PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC, size = 4) Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -30,9 +36,11 @@ public class DoctorController {
         return service.returnDoctorById(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}/patients")
-    public List<PatientDto> getAllPatientsByDoctorId(@PathVariable(name = "id") Integer id) {
-        return patientService.findAllByDoctorId(id);
+    public List<PatientDto> getAllPatientsByDoctorId(@PathVariable(name = "id") Integer id,
+                                                     @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC, size = 4) Pageable pageable) {
+        return patientService.findAllByDoctorId(id, pageable);
     }
 
     @PostMapping

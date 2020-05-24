@@ -9,6 +9,8 @@ import com.example.restexample.repository.PatientRepository;
 import com.example.restexample.service.PatientService;
 import com.example.restexample.service.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,16 +67,17 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public List<PatientDto> findAllByDoctorId(Integer id) {
-        return mapListToDto(patientRepository.findAllByDoctor_Id(id));
+    public List<PatientDto> findAllByDoctorId(Integer id, Pageable pageable) {
+        return mapPageToDto(patientRepository.findAllByDoctor_Id(id, pageable));
     }
 
     @Override
-    public List<PatientDto> findAll() {
-        return mapListToDto(patientRepository.findAll());
+    public List<PatientDto> findAll(Pageable pageable) {
+        return mapPageToDto(patientRepository.findAll(pageable));
     }
 
-    private List<PatientDto> mapListToDto(List<Patient> patients) {
+
+    private List<PatientDto> mapPageToDto(Page<Patient> patients) {
         return patients.stream()
                 .map((mapper::mapToDto))
                 .collect(Collectors.toList());
