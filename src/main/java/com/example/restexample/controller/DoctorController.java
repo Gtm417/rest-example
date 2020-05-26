@@ -7,6 +7,7 @@ import com.example.restexample.service.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -36,7 +37,7 @@ public class DoctorController {
     }
 
     @PostMapping
-    public void addDoctor(@RequestBody DoctorDto doctorDto) {
+    public void addDoctor(@Valid @RequestBody DoctorDto doctorDto) {
         service.createUpdate(doctorDto);
     }
 
